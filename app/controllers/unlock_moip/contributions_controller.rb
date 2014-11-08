@@ -1,14 +1,6 @@
 class UnlockMoip::ContributionsController < ::ApplicationController
 
-  inherit_resources
-  actions :create, :edit
-  custom_actions member: %i[activate suspend]
-  respond_to :html, except: [:activate, :suspend]
-  respond_to :json, only: [:activate, :suspend]
-
-  after_action :verify_authorized
-  after_action :verify_policy_scoped, only: %i[]
-  before_action :authenticate_user!, only: %i[edit]
+  is_unlock_gateway
 
   def create
 
@@ -156,44 +148,6 @@ class UnlockMoip::ContributionsController < ::ApplicationController
       return render '/initiatives/contributions/new'
     end
     
-  end
-
-  def edit
-    edit! { authorize resource }
-  end
-
-  def activate
-    transition_state("activate", :active)
-  end
-  
-  def suspend
-    transition_state("suspend", :suspended)
-  end
-
-  private
-
-  def transition_state(transition, state)
-    authorize resource
-    errors = []
-    if resource.send("can_#{transition}?")
-      begin
-        if resource.moip_state_name != state
-          response = Moip::Assinaturas::Subscription.send(transition.to_sym, resource.subscription_code, resource.moip_auth)
-          resource.send("#{transition}!") if response[:success]
-        else
-          resource.send("#{transition}!")
-        end
-      rescue
-        errors << "Não foi possível alterar o status de seu apoio."
-      end
-    else
-      errors << "Não é permitido alterar o status deste apoio."
-    end
-    render(json: {success: (errors.size == 0), errors: errors}, status: ((errors.size == 0) ? 200 : 422))
-  end
-  
-  def contribution_params
-    params.require(:contribution).permit(*policy(@contribution || Contribution.new).permitted_attributes)
   end
 
 end

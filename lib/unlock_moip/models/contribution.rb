@@ -33,7 +33,7 @@ module UnlockMoip
         end
       end
 
-      def moip_state_name
+      def state_on_gateway
         begin
           response = Moip::Assinaturas::Subscription.details(self.subscription_code, self.moip_auth)
         rescue
@@ -50,15 +50,10 @@ module UnlockMoip
         end
       end
 
-      def update_state_from_gateway!
-        if self.state_name != self.moip_state_name
-          case self.moip_state_name
-            when :active
-              self.activate! if self.can_activate?
-            when :suspended
-              self.suspend! if self.can_suspend?
-          end
-        end
+      def update_state_on_gateway!(state)
+        transition = self.transition_by_state(state)
+        response = Moip::Assinaturas::Subscription.send(transition, self.subscription_code, self.moip_auth)
+        response[:success]
       end
 
     end
