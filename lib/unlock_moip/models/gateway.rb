@@ -16,6 +16,10 @@ module UnlockMoip
         "unlock_moip/logo.png"
       end
 
+      def url
+        "https://moip.com.br/"
+      end
+
       def path
         "/moip"
       end

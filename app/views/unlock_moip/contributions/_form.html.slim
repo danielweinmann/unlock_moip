@@ -1,23 +1,7 @@
 = form_for @contribution, url: moip_contributions_path, method: :post do |form|
-  - if gateway.sandbox?
-    .warning
-      h3 Atenção! Este unlock encontra-se em modo de testes (Sandbox) no Moip.
-      ul
-        li Nenhum apoio realizado neste modo será concretizado.
-        li Você pode testar livremente, sem medo de ser debitado.
-  - if @contribution.errors.any?
-    #error_explanation.warning
-      h3 = "#{pluralize(@contribution.errors.count, "erro impediu", "erros impediram")} que este apoio fosse salvo:"
-      ul
-        - @contribution.errors.full_messages.each do |msg|
-          li= msg
-  = form.hidden_field :user_id
-  = form.hidden_field :initiative_id
-  = form.hidden_field :gateway_id, value: gateway.id
-  h3 Com quanto você quer apoiar por mês?
-  = form.label :value
-  = form.text_field :value, class: "has_em"
-  em Assinatura mensal cobrada via cartão de crédito pelo meio de pagamentos #{link_to 'Moip', 'https://moip.com.br/', target: :_blank }. Você pode suspender #{ link_to 'a qualquer momento', my_contributions_path, target: :_blank }.
+  = render partial: 'sandbox_warning', locals: { gateway: gateway }
+  = render partial: 'error_explanation', locals: { resource: @contribution }
+  = render partial: 'initiatives/contributions/base_form', locals: { form: form, gateway: gateway }
   h3 Preencha e revise os dados para pagamento
   = form.fields_for :user do |user_fields|
     = user_fields.hidden_field :id
