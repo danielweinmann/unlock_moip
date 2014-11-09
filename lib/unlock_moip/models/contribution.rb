@@ -33,6 +33,10 @@ module UnlockMoip
         end
       end
 
+      def gateway_identifier
+        self.gateway_data && self.gateway_data["subscription_code"]
+      end
+
       def state_on_gateway
         begin
           response = Moip::Assinaturas::Subscription.details(self.subscription_code, self.moip_auth)
