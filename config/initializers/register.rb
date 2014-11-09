@@ -1,4 +1,1 @@
-begin
-  Gateway.register 'UnlockMoip'
-rescue
-end
+UnlockGateway.register 'UnlockMoip'
