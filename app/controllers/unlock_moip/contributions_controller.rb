@@ -9,14 +9,7 @@ class UnlockMoip::ContributionsController < ::ApplicationController
       params[:contribution][:user_attributes][:birthdate] = params[:pickadate_birthdate_submit]
     end
     
-    # Creating the contribution
-    @initiative = Initiative.find(contribution_params[:initiative_id])
-    @gateways = @initiative.gateways.without_state(:draft).order(:ordering)
-    @contribution = @initiative.contributions.new(contribution_params)
-    @contribution.gateway_state = @contribution.gateway.state
-    authorize @contribution
-
-    if @contribution.save
+    if create_contribution
 
       data = {}
       # Storing the customer_code and subscription_code
@@ -144,8 +137,6 @@ class UnlockMoip::ContributionsController < ::ApplicationController
       flash[:success] = "Apoio iniciado com sucesso! Agora é só realizar o pagamento :D"
       return redirect_to edit_moip_contribution_path(@contribution)
 
-    else
-      return render '/initiatives/contributions/new'
     end
     
   end
