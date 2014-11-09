@@ -1,11 +1,13 @@
 $(document).ready ->
   if action() == "edit" and controller() == "contributions" and namespace() == "unlockmoip"
-    $('#pay_form [type=submit]').on "click", (event) ->
+    $('#pay_form').on "submit", (event) ->
       event.preventDefault()
       event.stopPropagation()
-      billing_info_ok = false
-      form = $('#pay_form')
+      form = $(@)
       submit = form.find('[type=submit]')
+      return unless submit.is(':visible')
+      submit.hide()
+      billing_info_ok = false
       status = form.find('.gateway_data')
       terms = form.find('#terms')
       status.removeClass 'success'
@@ -15,14 +17,12 @@ $(document).ready ->
         status.addClass 'failure'
         status.html("<h4>Você precisa aceitar os termos de uso para continuar.</h4>")
         status.show()
+        submit.show()
       else
         status.html("<h4>Enviando dados de pagamento para o Moip...</h4><ul></ul>")
-        token = form.data('token')
-        plan_code = form.data('plan')
-        submit.hide()
         status.show()
         if MoipAssinaturas?
-          moip = new MoipAssinaturas(token)
+          moip = new MoipAssinaturas(form.data('token'))
           moip.callback (response) ->
             status.find('h4').html("#{response.message} (Moip)")
             unless response.has_errors()
@@ -31,22 +31,10 @@ $(document).ready ->
                 subscription = new Subscription()
                 subscription.with_code(form.data('subscription'))
                 subscription.with_customer(customer)
-                subscription.with_plan_code(plan_code)
+                subscription.with_plan_code(form.data('plan'))
                 moip.subscribe(subscription)
               else
-                next_invoice = "#{response.next_invoice_date.day}/#{response.next_invoice_date.month}/#{response.next_invoice_date.year}"
-                $.ajax
-                  url: form.data('activate'),
-                  type: 'PUT',
-                  dataType: 'json',
-                  success: (response) ->
-                    window.location.href = form.data('show')
-                  error: (response) ->
-                    status.find('h4').html("Não foi possível ativar sua assinatura")
-                    status.addClass 'failure'
-                    for error in response.responseJSON.errors
-                      status.find('ul').append("<li>#{error}</li>")
-                    submit.show()
+                $('form.edit_contribution').submit()
             else
               status.addClass 'failure'
               for error in response.errors

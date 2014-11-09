@@ -1,5 +1,5 @@
 = form_for @contribution, url: moip_contributions_path, method: :post do |form|
-  = render partial: 'sandbox_warning', locals: { gateway: gateway }
+  = render partial: 'initiatives/contributions/sandbox_warning', locals: { gateway: gateway }
   = render partial: 'initiatives/contributions/base_form', locals: { form: form, gateway: gateway }
   h3 Preencha e revise os dados para pagamento
   = form.fields_for :user do |user_fields|

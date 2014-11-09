@@ -2,13 +2,9 @@
   = "Dados de pagamento"
 - content_for :external_js do
   script type="text/javascript" src="https://#{( @contribution.gateway.sandbox? ? 'sandbox' : 'api' )}.moip.com.br/moip-assinaturas.min.js"
-form#pay_form autocomplete="off" data-token=@contribution.gateway.settings["token"] data-plan=@contribution.plan_code data-customer=@contribution.customer_code data-subscription=@contribution.subscription_code data-activate=activate_moip_contribution_path data-show=initiative_contribution_path(@contribution.initiative.id, @contribution)
-  - if @contribution.gateway.sandbox?
-    .warning
-      h3 Atenção! Este unlock encontra-se em modo de testes (Sandbox) no Moip.
-      ul
-        li Nenhum apoio realizado neste modo será concretizado.
-        li Você pode testar livremente, sem medo de ser debitado.
+= form_for @contribution, url: activate_moip_contribution_path(@contribution), method: :put, html: { style: 'display: none'} do |form|
+form#pay_form autocomplete="off" data-token=@contribution.gateway.settings["token"] data-plan=@contribution.plan_code data-customer=@contribution.customer_code data-subscription=@contribution.subscription_code
+  = render partial: 'initiatives/contributions/sandbox_warning', locals: { gateway: @contribution.gateway }
   .field
     = label_tag :holder_name, "Nome escrito no cartão de crédito"
     = text_field_tag :holder_name, "", autocomplete: "off"
