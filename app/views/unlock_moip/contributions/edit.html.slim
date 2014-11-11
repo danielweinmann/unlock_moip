@@ -1,7 +1,12 @@
 - content_for :title do
   = "Dados de pagamento"
 - content_for :external_js do
-  script type="text/javascript" src="https://#{( @contribution.gateway.sandbox? ? 'sandbox' : 'api' )}.moip.com.br/moip-assinaturas.min.js"
+  / TODO get back to using JS from moip.com.br for production, whenever it's working
+  / script type="text/javascript" src="https://#{( @contribution.gateway.sandbox? ? 'sandbox' : 'api' )}.moip.com.br/moip-assinaturas.min.js"
+  - if @contribution.gateway.sandbox?
+    script type="text/javascript" src="https://sandbox.moip.com.br/moip-assinaturas.min.js"
+  - else
+    = javascript_include_tag '/moip-assinaturas.min.js'
 = form_for @contribution, url: activate_moip_contribution_path(@contribution), method: :put, html: { style: 'display: none'} do |form|
 form#pay_form autocomplete="off" data-token=@contribution.gateway.settings["token"] data-plan=@contribution.plan_code data-customer=@contribution.customer_code data-subscription=@contribution.subscription_code
   = render partial: 'initiatives/contributions/sandbox_warning', locals: { gateway: @contribution.gateway }
