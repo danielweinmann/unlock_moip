@@ -22,7 +22,7 @@ form#pay_form autocomplete="off" data-token=@contribution.gateway.settings["toke
     = label_tag :terms, "Eu li e aceito os #{ link_to 'termos de uso', page_path('terms'), target: :_blank }.".html_safe
   h4.value
     = "Apoio de "
-    span= "R$ #{@contribution.display_value},00"
+    span= @contribution.display_value
     = "/mês"
   .gateway_data
   .submit= submit_tag "Confirmar pagamento"
