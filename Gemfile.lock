@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    unlock_moip (0.2.0)
+    unlock_moip (0.2.1)
       moip-assinaturas (= 0.4.2)
       rails (~> 4.1.6)
       unlock_gateway (= 0.2.1)
