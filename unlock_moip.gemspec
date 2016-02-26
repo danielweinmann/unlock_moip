@@ -18,7 +18,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency "rails", "~> 4.1.6"
   s.add_dependency "unlock_gateway", "0.2.1"
-  s.add_dependency "moip-assinaturas", "0.4.2"
+  s.add_dependency "moip-assinaturas", "0.6.0"
 
   s.add_development_dependency "sqlite3"
 end
